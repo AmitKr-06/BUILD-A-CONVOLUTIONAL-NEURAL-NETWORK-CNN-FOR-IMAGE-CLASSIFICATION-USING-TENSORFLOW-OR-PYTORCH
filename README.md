@@ -32,4 +32,4 @@ Step 8: Make Predictions and Plot Confusion Matrix
 I predict classes and evaluate performance using a confusion matrix to see which classes are confused with each other.
 
 OUTPUT:
-
+<img width="1823" height="918" alt="Image" src="https://github.com/user-attachments/assets/c25302bc-2f1b-4237-b3ce-480a93efa5d2" />
