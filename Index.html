@@ -1,0 +1,91 @@
+## Step 1: Import Required library
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+## Step 2: Load CIFAR-10 Dataset
+(X_train, y_train), (X_test, y_test) = tf.keras.datasets.cifar10.load_data()
+
+## Step 3: Split dataset and Normalize pixel values
+X_train, X_test = X_train / 255.0, X_test / 255.0
+
+## Step 4: Class Names
+class_names = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
+
+## Step 5: Visualize Some Images
+plt.figure(figsize=(10,5))
+for i in range(10):
+    plt.subplot(2,5,i+1)
+    plt.imshow(X_train[i])
+    plt.title(class_names[y_train[i][0]])
+    plt.axis('off')
+plt.tight_layout()
+plt.show()
+
+## Step 6: import some libraries
+from tensorflow.keras import layers
+from tensorflow.keras import models
+
+## Step 7: Build the CNN Model
+model = models.Sequential([
+    layers.Conv2D(32, (3,3), activation='relu', input_shape=(32, 32, 3)),
+    layers.MaxPooling2D((2,2)), layers.Conv2D(64, (3,3), activation='relu'),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation='relu'), layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')])
+
+## Step 8: Compile the Model
+  model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+## Step 9: Train the Model
+history = model.fit(X_train, y_train, epochs=10,validation_data=(X_test, y_test))      
+
+## Step 10: Evaluate the Model
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {test_acc:.4f}")
+
+## Step 11: Plot Training Accuracy Model
+plt.figure(figsize=(12, 5))
+plt.subplot(1,2,1)
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Test Accuracy')
+plt.title("Model Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.legend()
+plt.show()
+
+## Step 12: Plot Training Loss Model
+plt.subplot(1,2,2)
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Test Loss')
+plt.title("Model Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+## Step 13: Predict classes
+y_pred = model.predict(X_test)
+
+## Step 14: Get highest probability index
+y_pred_classes = np.argmax(y_pred, axis=1)
+
+## Step 15: Convert from shape (10000,1) to (10000,)
+y_true = y_test.flatten()
+
+## Step 16: Import Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_true, y_pred_classes)
+
+## Step 17: Plot Confusion Matrix
+plt.figure(figsize=(10,8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+    
